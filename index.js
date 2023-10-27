@@ -1,4 +1,11 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const url =
+  "mongodb+srv://@cluster0.fxratcj.mongodb.net/coursesDb?retryWrites=true&w=majority";
+
+mongoose.connect(url).then(() => {
+  console.log("mongodb connect successfuly");
+});
 
 const app = express();
 const port = 4000;
