@@ -1,21 +1,33 @@
 const { validationResult } = require("express-validator");
-// let { courses } = require("../data/courses");
 const Course = require("../models/course.model");
+const httpStatusText = require("../utils/httpStatusText");
 
 const getAllCourses = async (req, res) => {
-  console.log(await Course.find());
-  res.json(await Course.find());
+  res.json({
+    status: httpStatusText.SUCCESS,
+    data: { courses: await Course.find() },
+  });
 };
 
 const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId);
     if (!course) {
-      res.status(404).json({ msg: "course not found" });
+      res.status(404).json({
+        status: httpStatusText.FAIL,
+        data: null,
+        course: { msg: "course not found" },
+      });
     }
-    res.json(course);
+    res.json({
+      status: httpStatusText.SUCCESS,
+      data: { course: course },
+    });
   } catch (error) {
-    res.status(400).json({ msg: "Id not Valid" });
+    res.status(400).json({
+      status: httpStatusText.ERROR,
+      message: error.message,
+    });
   }
 };
 
@@ -29,29 +41,55 @@ const updateCourse = async (req, res) => {
         $set: { ...req.body },
       }
     );
-    res.status(200).json(updatedCourse);
+    res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: { course: updatedCourse },
+    });
   } catch (error) {
-    return res.status(400).json({ msg: "Not Updated" });
+    return res.status(400).json({
+      status: httpStatusText.ERROR,
+      message: error.message,
+    });
   }
 };
 
 const deleteCourse = async (req, res) => {
   try {
     const deletedCourse = await Course.deleteOne({ _id: req.params.courseId });
-    res.status(200).json(deletedCourse);
+    res.status(200).json({
+      status: httpStatusText.SUCCESS,
+      data: { course: deletedCourse },
+    });
   } catch (error) {
-    res.status(400).json({ msg: "course not found Or We have Error" });
+    res.status(400).json({
+      status: httpStatusText.ERROR,
+      message: error.message,
+    });
   }
 };
 
 const addCourse = async (req, res) => {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.array());
+  try {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        status: httpStatusText.FAIL,
+        data: null,
+        course: { msg: errors.array() },
+      });
+    }
+    const newCourse = new Course(req.body);
+    await newCourse.save();
+    res.status(201).json({
+      status: httpStatusText.SUCCESS,
+      data: { course: newCourse },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: httpStatusText.ERROR,
+      message: error.message,
+    });
   }
-  const newCourse = new Course(req.body);
-  await newCourse.save();
-  res.status(201).json(newCourse);
 };
 module.exports = {
   deleteCourse,
