@@ -1,8 +1,7 @@
-const { validationResult } = require("express-validator");
 const Course = require("../models/course.model");
 const httpStatusText = require("../utils/httpStatusText");
 const asyncWapper = require("../middlewares/asyncWapper");
-const AppError = require("../utils/appError");
+
 const appError = require("../utils/appError");
 
 const getAllCourses = async (req, res) => {
@@ -58,11 +57,6 @@ const deleteCourse = asyncWapper(async (req, res) => {
 });
 
 const addCourse = asyncWapper(async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.array()) {
-    const error = appError.create(errors.array(), 400, httpStatusText.FAIL);
-    return next(error);
-  }
   const newCourse = new Course(req.body);
   await newCourse.save();
   res.status(201).json({

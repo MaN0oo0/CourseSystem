@@ -22,8 +22,10 @@ app.use(cors());
 app.use(express.json());
 
 const coursesRouter = require("./routes/courses_route");
+const usersRouter = require("./routes/users_route");
 
 app.use("/api/courses", coursesRouter);
+app.use("/api/users", usersRouter);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
@@ -40,6 +42,6 @@ app.use((err, req, res, next) => {
   console.log(err);
   return res.status(err.statusCode || 500).json({
     status: err.statusText || httpStatusText.ERROR,
-    message: err.message,
+    message: err.message || null,
   });
 });
