@@ -3,6 +3,22 @@ const { body } = require("express-validator");
 let router = express.Router();
 let usersController = require("../controllers/usersController");
 const authToken = require("../middlewares/authToken");
+
+const multer = require("multer");
+const diskstorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads");
+  },
+  filename: function (req, file, cb) {
+    const ext = file.mimetype.split("/")[1];
+
+    const uniqueSuffix =
+      Date.now() + "-" + Math.round(Math.random() * 1e9) + `.${ext}`;
+    cb(null, uniqueSuffix);
+  },
+});
+
+const upload = multer({ storage: diskstorage });
 /**
  *  [
       body("firstName")
@@ -26,7 +42,9 @@ const authToken = require("../middlewares/authToken");
 
 //routes
 router.route("/").get(authToken, usersController.getAllUsers);
-router.route("/register").post(usersController.register);
+router
+  .route("/register")
+  .post(upload.single("avatar"), usersController.register);
 router.route("/login").post(usersController.login);
 
 module.exports = router;

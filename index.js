@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require("path");
 const cors = require("cors");
 const httpStatusText = require("./utils/httpStatusText");
 require("dotenv").config();
@@ -10,6 +11,8 @@ mongoose.connect(url).then(() => {
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //enable cors
 

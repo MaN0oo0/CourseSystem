@@ -61,7 +61,9 @@ const login = asyncWapper(async (req, res, next) => {
       data: {
         userToken: await generateToken({
           email: IsExsited.email,
+          firstName: IsExsited.firstName,
           id: IsExsited.id,
+          role: IsExsited.role,
         }),
       },
     });
@@ -69,7 +71,7 @@ const login = asyncWapper(async (req, res, next) => {
 });
 
 const register = asyncWapper(async (req, res, next) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
   let IsExsited = await User.findOne({ email: req.body.email });
 
   if (IsExsited != null) {
@@ -89,11 +91,16 @@ const register = asyncWapper(async (req, res, next) => {
     lastName,
     email,
     password: pwdHash,
+    role,
   });
 
   //generate JWT token
 
-  newUser.token = await generateToken({ email: newUser.email, id: newUser.id });
+  newUser.token = await generateToken({
+    email: newUser.email,
+    id: newUser.id,
+    role: newUser.role,
+  });
 
   await newUser.save();
   return res.status(201).json({
