@@ -62,6 +62,8 @@ const login = asyncWapper(async (req, res, next) => {
         userToken: await generateToken({
           email: IsExsited.email,
           firstName: IsExsited.firstName,
+          lastName: IsExsited.lastName,
+          avata: IsExsited.avatar,
           id: IsExsited.id,
           role: IsExsited.role,
         }),
