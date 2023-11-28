@@ -17,7 +17,7 @@ const auth = (req, res, next) => {
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.currentUser = decodedToken;
-    console.log("currenUser", decodedToken);
+
     next();
   } catch (error) {
     const err = appError.create(

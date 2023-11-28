@@ -42,10 +42,11 @@ const upload = multer({ storage: diskstorage });
 
 //routes
 router.route("/").get(authToken, usersController.getAllUsers);
+router.route("/").get(authToken);
 router
   .route("/register")
   .post(upload.single("avatar"), usersController.register);
 router.route("/login").post(usersController.login);
-router.route("/").post(authToken);
+// router.route("/verifyToken").get(authToken);
 
 module.exports = router;
