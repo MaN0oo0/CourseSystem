@@ -46,5 +46,6 @@ router
   .route("/register")
   .post(upload.single("avatar"), usersController.register);
 router.route("/login").post(usersController.login);
+router.post(authToken);
 
 module.exports = router;
