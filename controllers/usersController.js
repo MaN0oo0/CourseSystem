@@ -114,10 +114,18 @@ const register = asyncWapper(async (req, res, next) => {
 const verifyToken = asyncWapper(async (req, res, next) => {
   if (req.headers != null) {
     try {
+      let IsExsited = await User.findOne({ userToken: req.body.token });
+
+      if (IsExsited == null) {
+        let error = appError.create(
+          "Token is not found ",
+          404,
+          httpStatusText.FAIL
+        );
+        return next(error);
+      }
+
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      req.currentUser = decodedToken;
-      console.log("currenUser", decodedToken);
-      next();
     } catch (error) {
       const err = appError.create(
         "invalid token",
